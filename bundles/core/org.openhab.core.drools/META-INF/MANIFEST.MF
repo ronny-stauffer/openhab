@@ -31,21 +31,7 @@ Bundle-DocURL: http://www.openhab.org
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Service-Component: OSGI-INF/ruleservice.xml
 Bundle-ClassPath: .,
- lib/antlr-runtime.jar,
- lib/drools-api.jar,
- lib/drools-bpmn2.jar,
- lib/drools-compiler.jar,
- lib/drools-core.jar,
- lib/drools-decisiontables.jar,
- lib/drools-ide-common.jar,
- lib/drools-jsr94.jar,
- lib/drools-templates.jar,
- lib/jsr94.jar,
- lib/jxl.jar,
- lib/log4j.jar,
- lib/mvel2.jar,
- lib/xpp3_min.jar,
- lib/xstream.jar
+ lib/drools.jar
 Require-Bundle: org.eclipse.jdt.core
 Export-Package: org.openhab.core.drools.actions,
  org.openhab.core.drools.event

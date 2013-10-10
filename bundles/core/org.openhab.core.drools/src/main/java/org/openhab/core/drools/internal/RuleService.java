@@ -93,10 +93,19 @@ public class RuleService extends AbstractActiveService implements ManagedService
 	
 	public void activate() {
 		
+		logger.info("Activating Rule Service...");
+		
 		SystemEventListenerFactory.setSystemEventListener(new RuleEventListener());
 
-		KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-		kbuilder.add(ResourceFactory.newClassPathResource(RULES_CHANGESET, getClass()), ResourceType.CHANGE_SET);
+		KnowledgeBuilder kbuilder;
+		try {
+			kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+			kbuilder.add(ResourceFactory.newClassPathResource(RULES_CHANGESET, getClass()), ResourceType.CHANGE_SET);
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+			
+			throw e;
+		}
 
 		if(kbuilder.hasErrors()) {
 		    logger.error("There are errors in the rules: " + kbuilder.getErrors());
@@ -130,6 +139,8 @@ public class RuleService extends AbstractActiveService implements ManagedService
 				itemAdded(item);
 			}
 		}
+		
+		logger.info("Starting rule evaluation...");
 		
 		setProperlyConfigured(true);
 	}
