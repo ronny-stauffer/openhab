@@ -14,6 +14,7 @@ import org.openhab.core.library.items.ColorItem;
 import org.openhab.core.library.items.ContactItem;
 import org.openhab.core.library.items.DateTimeItem;
 import org.openhab.core.library.items.DimmerItem;
+import org.openhab.core.library.items.JalousieItem;
 import org.openhab.core.library.items.LocationItem;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.items.RollershutterItem;
@@ -29,7 +30,7 @@ import org.openhab.core.library.items.SwitchItem;
  */
 public class CoreItemFactory implements ItemFactory {
 	
-	private static String[] ITEM_TYPES = new String[] { "Switch", "Rollershutter", "Contact", "String", "Number", "Dimmer", "DateTime", "Color", "Location" };
+	private static String[] ITEM_TYPES = new String[] { "Switch", "Rollershutter", "Contact", "String", "Number", "Dimmer", "DateTime", "Color", "Location", "Jalousie" };
 
 	/**
 	 * @{inheritDoc}
@@ -44,6 +45,7 @@ public class CoreItemFactory implements ItemFactory {
 		if (itemTypeName.equals(ITEM_TYPES[6])) return new DateTimeItem(itemName);
 		if (itemTypeName.equals(ITEM_TYPES[7])) return new ColorItem(itemName);
 		if (itemTypeName.equals(ITEM_TYPES[8])) return new LocationItem(itemName);
+		if (itemTypeName.equals(ITEM_TYPES[9])) return new JalousieItem(itemName);
 		else return null;
 	}
 	
