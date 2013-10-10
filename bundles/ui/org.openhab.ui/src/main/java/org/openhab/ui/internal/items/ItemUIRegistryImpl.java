@@ -47,6 +47,7 @@ import org.openhab.core.items.ItemRegistryChangeListener;
 import org.openhab.core.library.items.ColorItem;
 import org.openhab.core.library.items.ContactItem;
 import org.openhab.core.library.items.DimmerItem;
+import org.openhab.core.library.items.JalousieItem;
 import org.openhab.core.library.items.NumberItem;
 import org.openhab.core.library.items.RollershutterItem;
 import org.openhab.core.library.items.StringItem;
@@ -141,7 +142,8 @@ public class ItemUIRegistryImpl implements ItemUIRegistry {
 		// like "rollerblind".
 		if (itemType.equals(NumberItem.class) ||
 				itemType.equals(ContactItem.class) ||
-				itemType.equals(RollershutterItem.class)) {
+				itemType.equals(RollershutterItem.class) ||
+				itemType.equals(JalousieItem.class)) {
 			return itemType.getSimpleName().replace("Item", "").toLowerCase();
 		}
 		return null;
