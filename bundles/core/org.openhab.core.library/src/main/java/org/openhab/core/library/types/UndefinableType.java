@@ -28,8 +28,12 @@
  */
 package org.openhab.core.library.types;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import javax.swing.text.html.MinimalHTMLWriter;
 
+import org.openhab.core.library.types.ExtendedJalousieType.Flags;
 import org.openhab.core.types.PrimitiveType;
 import org.openhab.core.types.State;
 
@@ -54,24 +58,42 @@ public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, 
 
 	private static final long serialVersionUID = 4226845847123464690L;
 
-	private static final String UNDEFINED_LITERAL = "*";
-	private static final String MAXIMIM_TOKEN = "<";
+	public static final String UNDEFINED_LITERAL = "-";
+	private static final String MAXIMUM_TOKEN = "<";
 	private static final String MINIMUM_TOKEN = ">";
 	
-	//public static final UndefinableType<?> UNDEFINED = new UndefinableType();
+	public static final String WILDCARD_LITERAL = "*";	
+	
+	public static final UndefinableType<?> UNDEFINED = new UndefinableType();
 	public static <T extends PrimitiveType> UndefinableType<T> UNDEFINED() {
-		return new UndefinableType<T>();
+		//return new UndefinableType<T>();
+		return (UndefinableType<T>)UNDEFINED;
 	}
+
+	protected enum Flags {
+		NONE,
+		IS_WILDCARD
+	}
+	
+	public static final UndefinableType<?> WILDCARD = new UndefinableType(Flags.IS_WILDCARD);
 
 	protected T value;
 	protected Qualifier qualifier = Qualifier.NONE;
+	
+	protected boolean isWildcard;
 
-	private UndefinableType() {
-		this.value = null;
+	private UndefinableType(Flags... _flags) {
+//		this.value = null;
+		
+		Set<Flags> flags = EnumSet.<Flags>of(Flags.NONE, _flags);
+		if (flags.contains(Flags.IS_WILDCARD)) {
+			this.isWildcard = true;
+		}
 	}
 
-	protected UndefinableType(T value) {
+	protected UndefinableType(T value, boolean isWildcard) {
 		this.value = value;
+		this.isWildcard = isWildcard;
 	}
 	
 	protected UndefinableType(T value, Qualifier qualifier) {
@@ -80,7 +102,7 @@ public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, 
 	}
 
 	public static <T extends PrimitiveType> UndefinableType<T> valueOf(T value) {
-		return new UndefinableType<T>(value);
+		return new UndefinableType<T>(value, false);
 	}
 	
 	public static <T extends PrimitiveType> UndefinableType<T> valueOf(String value, ValueCreator<T> valueCreator) {
@@ -93,11 +115,16 @@ public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, 
 			return UNDEFINED();
 		}
 		
+		// Handle wildcard
+		if (WILDCARD_LITERAL.equals(value)) {
+			return (UndefinableType<T>)WILDCARD;
+		}
+		
 		// Handle optional qualifier
 		Qualifier qualifier = Qualifier.NONE;
 		String subValue = value;
 		if (value.length() > 1) {
-			if (MAXIMIM_TOKEN.equals(value.substring(0, 1))) {
+			if (MAXIMUM_TOKEN.equals(value.substring(0, 1))) {
 				qualifier = Qualifier.MAXIMUM;
 				subValue = value.substring(1);
 			} else if (MINIMUM_TOKEN.equals(value.substring(0, 1))) {
@@ -141,8 +168,31 @@ public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, 
 			return false;
 		}
 		UndefinableType<?> otherUndefinableType = (UndefinableType<?>)other;
-		if (value == null && otherUndefinableType.value == null
-				|| otherUndefinableType.value != null && otherUndefinableType.value.equals(value)) {
+		if (/* isWildcard
+				|| otherUndefinableType.isWildcard
+				|| */ value == null && otherUndefinableType.value == null
+				//|| otherUndefinableType.value != null && otherUndefinableType.value.equals(value)) {
+				|| value != null && value.equals(otherUndefinableType.value)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean matches(Object other) {
+		if (other == null) {
+			return false;
+		}
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof UndefinableType)) {
+			return false;
+		}
+		UndefinableType<?> otherUndefinableType = (UndefinableType<?>)other;
+		if (isWildcard
+				|| otherUndefinableType.isWildcard
+				|| this.equals(otherUndefinableType)) {
 			return true;
 		}
 		
@@ -161,15 +211,24 @@ public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, 
 	}
 	
 	public String toString() {
+		if (isWildcard) {
+			return WILDCARD_LITERAL;
+		}
+		
 		if (value != null) {
+			String prefix = "";
 			switch (qualifier) {
 			case MAXIMUM:
-				return String.format("%s%s", MAXIMIM_TOKEN, value);
+				prefix = MAXIMUM_TOKEN;
+				
+				break;
 			case MINIMUM:
-				return String.format("%s%s", MINIMUM_TOKEN, value);
-			default:
-				return value.toString();
+				prefix = MINIMUM_TOKEN;
+				
+				break;
 			}
+			
+			return String.format("%s%s", prefix, value);
 		}
 		
 		return UNDEFINED_LITERAL;

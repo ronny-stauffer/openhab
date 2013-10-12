@@ -57,11 +57,11 @@ public class JalousieItem extends GenericItem {
 	private static List<Class<? extends Command>> acceptedCommandTypes = new ArrayList<Class<? extends Command>>();
 	
 	static {
-		acceptedDataTypes.add(UnDefType.class);
-		acceptedDataTypes.add(UpDownType.class);
-		acceptedDataTypes.add(PercentType.class);
-		//acceptedDataTypes.add(JalousieType.class); // <-- State type which is internally used within this item
 		acceptedDataTypes.add(ExtendedJalousieType.class); // <-- State type which is internally used within this item
+		//acceptedDataTypes.add(JalousieType.class); // <-- State type which is internally used within this item
+		acceptedDataTypes.add(PercentType.class);
+		acceptedDataTypes.add(UpDownType.class);
+		acceptedDataTypes.add(UnDefType.class);		
 
 		//acceptedCommandTypes.add(JalousieType.class);
 		acceptedCommandTypes.add(ExtendedJalousieType.class);

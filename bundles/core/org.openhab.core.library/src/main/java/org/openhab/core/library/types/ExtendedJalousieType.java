@@ -28,7 +28,10 @@
  */
 package org.openhab.core.library.types;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -49,64 +52,107 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 
 	private static final long serialVersionUID = 322902950356613226L;
 
+	public enum Flags {
+		NONE,
+		IS_CHANGING
+	}
+	
+	private static final String EMPTY_STRING = "";
+	private static final String IS_CHANGING_TOKEN = "+";
+	public static final String CLOSED_LITERAL = "CLOSED";
+	public static final String NOT_CLOSED_LITERAL = "NOT_CLOSED";
+	
 	// Constants for the constituents
 	static final public String KEY_VALUE = "v";
 	static final public String KEY_SLATS_OPENING_VALUE = "s";
 
 	// Constants for boundary values
+	static final public ExtendedJalousieType UNDEFINED = new ExtendedJalousieType(UndefinableType.<PercentType>UNDEFINED(), UndefinableType.<PercentType>UNDEFINED());
 	static final public ExtendedJalousieType UP = new ExtendedJalousieType(UndefinableType.valueOf(PercentType.ZERO), UndefinableType.<PercentType>UNDEFINED());
 	static final public ExtendedJalousieType DOWN_AND_SLATS_CLOSED = new ExtendedJalousieType(UndefinableType.valueOf(PercentType.HUNDRED), UndefinableType.valueOf(PercentType.ZERO));
 
 	// The inherited field "value" of the parent DecimalType corresponds to the
 	// "value" constituent of this complex type.
 	
-	protected UndefinableType<PercentType> slatsOpeningValue;	
+	protected UndefinableType<PercentType> slatsOpeningValue;
+	
+	//TODO Implement this on UndefinableType?
+	protected boolean isChanging;
 
 	// The constructor is not part of the public API.
-	private ExtendedJalousieType(UndefinableType<PercentType> value, UndefinableType<PercentType> slatsOpeningValue) {
-		super(value.value);
+	private ExtendedJalousieType(UndefinableType<PercentType> value, UndefinableType<PercentType> slatsOpeningValue, Flags... _flags) {
+		super(value.value, value.isWildcard);
 		this.slatsOpeningValue = slatsOpeningValue;
+		
+		Set<Flags> flags = EnumSet.<Flags>of(Flags.NONE, _flags);
+		if (flags.contains(Flags.IS_CHANGING)) {
+			this.isChanging = true;
+		}
 	}
 
-	// Instead, here are static factory methods to be used for instance creation. 
-	public static ExtendedJalousieType valueOf(UndefinableType<PercentType> value, UndefinableType<PercentType> slatsOpeningValue) {
+	// Instead, here are static factory methods to be used for instance creation.
+	public static ExtendedJalousieType valueOf(UndefinableType<PercentType> value, UndefinableType<PercentType> slatsOpeningValue, Flags... flags) {
 		if (value == null) {
 			throw new IllegalArgumentException("value must not be null!");
 		}
 		if (slatsOpeningValue == null) {
 			throw new IllegalArgumentException("slatsOpeningValue must not be null!");
 		}
-		return new ExtendedJalousieType(value, slatsOpeningValue);
+		return new ExtendedJalousieType(value, slatsOpeningValue, flags);
 	}
 	// This static factory method is used by the openHAB scripting engine
 	// in order to create an instance of this type when a literal is specified in a script.
-	public static ExtendedJalousieType valueOf(String literalValue) {
+	public static ExtendedJalousieType valueOf(final String literalValue) {
 		if (literalValue == null) {
 			throw new /* NullPointerException */ IllegalArgumentException(
 				"literalValue must not be null!");
 		}
 		
-		UndefinableType<PercentType> value;
-		UndefinableType<PercentType> slatsOpeningValue;
-		final String[] constituents = literalValue.split(":");
-		if (constituents.length == 2) {
-			value = UndefinableType.valueOf(constituents[0], new ValueCreator<PercentType>() {
-				@Override
-				public PercentType create(String value) {
-					return new PercentType(constituents[0]); // Cast to PercentType includes syntax check!
-				}
-			});
-			slatsOpeningValue = UndefinableType.valueOf(constituents[1], new ValueCreator<PercentType>() {
-				@Override
-				public PercentType create(String value) {
-					return new PercentType(constituents[1]);
-				}
-			});
-		} else {
-			throw new IllegalArgumentException(String.format("'%s' is not a valid jalousie type literal!", literalValue));
+		String buffer = literalValue;
+
+		if (CLOSED_LITERAL.equals(buffer)) {
+			return DOWN_AND_SLATS_CLOSED;
+		} else if (NOT_CLOSED_LITERAL.equals(buffer)) {
+			return UNDEFINED;
 		}
 		
-		return new ExtendedJalousieType(value, slatsOpeningValue);
+		UndefinableType<PercentType> value;
+		UndefinableType<PercentType> slatsOpeningValue;
+		Set<Flags> flags = EnumSet.noneOf(Flags.class);
+		
+		if (buffer.startsWith(IS_CHANGING_TOKEN) && buffer.length() > IS_CHANGING_TOKEN.length()) {
+			flags.add(Flags.IS_CHANGING);
+			
+			buffer = buffer.substring(IS_CHANGING_TOKEN.length());
+		}
+		
+		if (UndefinableType.UNDEFINED_LITERAL.equals(buffer)) {
+			value = UndefinableType.<PercentType>UNDEFINED();
+			slatsOpeningValue = UndefinableType.<PercentType>UNDEFINED();
+		} else if (UndefinableType.WILDCARD_LITERAL.equals(buffer)) {
+			value = (UndefinableType<PercentType>)UndefinableType.WILDCARD;
+			slatsOpeningValue = (UndefinableType<PercentType>)UndefinableType.WILDCARD;
+		} else {
+			final String[] constituents = buffer.split(":");
+			if (constituents.length == 2) {
+				value = UndefinableType.valueOf(constituents[0], new ValueCreator<PercentType>() {
+					@Override
+					public PercentType create(String value) {
+						return new PercentType(constituents[0]); // Cast to PercentType includes syntax check!
+					}
+				});
+				slatsOpeningValue = UndefinableType.valueOf(constituents[1], new ValueCreator<PercentType>() {
+					@Override
+					public PercentType create(String value) {
+						return new PercentType(constituents[1]);
+					}
+				});
+			} else {
+				throw new IllegalArgumentException(String.format("'%s' is not a valid jalousie type literal!", literalValue));
+			}
+		}
+		
+		return new ExtendedJalousieType(value, slatsOpeningValue, flags.toArray(new Flags[] {}));
 	}
 
 	// Getter for constituents map
@@ -125,6 +171,10 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	public UndefinableType<PercentType> getSlatsOpeningValue() {
 		return slatsOpeningValue;
 	}
+	
+	public boolean isChanging() {
+		return isChanging;
+	}
 
 	@Override
 	public boolean equals(Object other) {
@@ -138,11 +188,37 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 			return false;
 		}
 		ExtendedJalousieType otherJalousieType = (ExtendedJalousieType)other;
-		if (super.equals(otherJalousieType) && slatsOpeningValue.equals(otherJalousieType.slatsOpeningValue)) {
-			return true;
+		if (!(super.equals(otherJalousieType)
+				&& slatsOpeningValue.equals(otherJalousieType.slatsOpeningValue)
+				&& isChanging == otherJalousieType.isChanging)) {
+			return false;
 		}
 		
 		return super.equals(other);
+	}
+	
+	@Override
+	public boolean matches(Object other) {
+		if (other == null) {
+			return false;
+		}
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof ExtendedJalousieType)) {
+			return false;
+		}
+		ExtendedJalousieType otherJalousieType = (ExtendedJalousieType)other;
+		UndefinableType<PercentType> _value = new UndefinableType<PercentType>(value, isWildcard);
+		if (!(/* isWildcard
+				|| otherJalousieType.isWildcard
+				|| */ _value.matches(otherJalousieType)
+						&& slatsOpeningValue.matches(otherJalousieType.slatsOpeningValue)
+						&& isChanging == otherJalousieType.isChanging)) {
+			return false;
+		}
+		
+		return _value.matches(other);
 	}
 	
 	@Override
@@ -154,6 +230,6 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	}
 	
 	public String toString() {
-		return String.format("%s:%s", super.toString(), slatsOpeningValue);
+		return String.format("%s%s:%s", isChanging ? IS_CHANGING_TOKEN : EMPTY_STRING, super.toString(), slatsOpeningValue);
 	}
 }
