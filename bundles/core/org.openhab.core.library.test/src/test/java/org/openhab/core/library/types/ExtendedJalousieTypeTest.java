@@ -18,7 +18,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(22, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -31,7 +31,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(22, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.isSet());
 		assertEquals(11, jalousieValue.getValueSet().intValue());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class ExtendedJalousieTypeTest {
 
 		assertFalse(jalousieValue.isSet());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(99, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertTrue(jalousieValue.isChanging());
+		assertTrue(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(22, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -94,7 +94,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(22, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -105,7 +105,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.isSet());
 		assertEquals(11, jalousieValue.getValueSet().intValue());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -115,7 +115,7 @@ public class ExtendedJalousieTypeTest {
 
 		assertFalse(jalousieValue.isSet());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -128,7 +128,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(99, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertTrue(jalousieValue.isChanging());
+		assertTrue(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class ExtendedJalousieTypeTest {
 
 		assertFalse(jalousieValue.isSet());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertTrue(jalousieValue.isChanging());
+		assertTrue(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -147,7 +147,7 @@ public class ExtendedJalousieTypeTest {
 
 		assertFalse(jalousieValue.isSet());
 		assertFalse(jalousieValue.getSlatsOpeningValue().isSet());
-		assertTrue(jalousieValue.isChanging());
+		assertTrue(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test
@@ -237,6 +237,28 @@ public class ExtendedJalousieTypeTest {
 		assertFalse(otherJalousieValue.equals(jalousieValue));
 	}
 
+	@Test
+	public void testMatches() {
+		ExtendedJalousieType jalousieValue = ExtendedJalousieType
+				.valueOf("11:22");
+		ExtendedJalousieType otherJalousieValue = ExtendedJalousieType
+				.valueOf("11:22");
+
+		assertTrue(jalousieValue.matches(otherJalousieValue));
+		assertTrue(otherJalousieValue.matches(jalousieValue));
+	}
+
+	@Test
+	public void testMatchesNoEquality() {
+		ExtendedJalousieType jalousieValue = ExtendedJalousieType
+				.valueOf("11:22");
+		ExtendedJalousieType otherJalousieValue = ExtendedJalousieType
+				.valueOf("22:33");
+
+		assertFalse(jalousieValue.matches(otherJalousieValue));
+		assertFalse(otherJalousieValue.matches(jalousieValue));
+	}
+	
 	@Test
 	public void testMatchesWildcard() {
 		ExtendedJalousieType jalousieValue = ExtendedJalousieType
@@ -377,7 +399,7 @@ public class ExtendedJalousieTypeTest {
 		assertTrue(jalousieValue.getSlatsOpeningValue().isSet());
 		assertEquals(0, jalousieValue.getSlatsOpeningValue().getValueSet()
 				.intValue());
-		assertFalse(jalousieValue.isChanging());
+		assertFalse(jalousieValue.isTransitionallyChanging());
 	}
 
 	@Test

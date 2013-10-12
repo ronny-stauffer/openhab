@@ -48,7 +48,7 @@ import org.openhab.core.types.State;
  * @since ...
  * 
  */
-public class ExtendedJalousieType extends UndefinableType<PercentType> implements ComplexType, State, Command {
+public class ExtendedJalousieType extends UndefinableType<PercentType> implements TransitionallyChangingType, ComplexType, State, Command {
 
 	private static final long serialVersionUID = 322902950356613226L;
 
@@ -77,7 +77,7 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	protected UndefinableType<PercentType> slatsOpeningValue;
 	
 	//TODO Implement this on UndefinableType?
-	protected boolean isChanging;
+	protected boolean isTransitionallyChanging;
 
 	// The constructor is not part of the public API.
 	private ExtendedJalousieType(UndefinableType<PercentType> value, UndefinableType<PercentType> slatsOpeningValue, Flags... _flags) {
@@ -86,7 +86,7 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 		
 		Set<Flags> flags = EnumSet.<Flags>of(Flags.NONE, _flags);
 		if (flags.contains(Flags.IS_CHANGING)) {
-			this.isChanging = true;
+			this.isTransitionallyChanging = true;
 		}
 	}
 
@@ -172,8 +172,8 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 		return slatsOpeningValue;
 	}
 	
-	public boolean isChanging() {
-		return isChanging;
+	public boolean isTransitionallyChanging() {
+		return isTransitionallyChanging;
 	}
 
 	@Override
@@ -190,7 +190,7 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 		ExtendedJalousieType otherJalousieType = (ExtendedJalousieType)other;
 		if (!(super.equals(otherJalousieType)
 				&& slatsOpeningValue.equals(otherJalousieType.slatsOpeningValue)
-				&& isChanging == otherJalousieType.isChanging)) {
+				&& isTransitionallyChanging == otherJalousieType.isTransitionallyChanging)) {
 			return false;
 		}
 		
@@ -214,7 +214,7 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 				|| otherJalousieType.isWildcard
 				|| */ _value.matches(otherJalousieType)
 						&& slatsOpeningValue.matches(otherJalousieType.slatsOpeningValue)
-						&& isChanging == otherJalousieType.isChanging)) {
+						&& isTransitionallyChanging == otherJalousieType.isTransitionallyChanging)) {
 			return false;
 		}
 		
@@ -230,6 +230,6 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	}
 	
 	public String toString() {
-		return String.format("%s%s:%s", isChanging ? IS_CHANGING_TOKEN : EMPTY_STRING, super.toString(), slatsOpeningValue);
+		return String.format("%s%s:%s", isTransitionallyChanging ? IS_CHANGING_TOKEN : EMPTY_STRING, super.toString(), slatsOpeningValue);
 	}
 }

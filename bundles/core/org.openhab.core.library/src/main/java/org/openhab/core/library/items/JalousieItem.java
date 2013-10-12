@@ -58,13 +58,13 @@ public class JalousieItem extends GenericItem {
 	
 	static {
 		acceptedDataTypes.add(ExtendedJalousieType.class); // <-- State type which is internally used within this item
-		//acceptedDataTypes.add(JalousieType.class); // <-- State type which is internally used within this item
+		//acceptedDataTypes.add(JalousieType.class); // <-- State type which is internally used within this item		
 		acceptedDataTypes.add(PercentType.class);
 		acceptedDataTypes.add(UpDownType.class);
 		acceptedDataTypes.add(UnDefType.class);		
 
-		//acceptedCommandTypes.add(JalousieType.class);
 		acceptedCommandTypes.add(ExtendedJalousieType.class);
+		//acceptedCommandTypes.add(JalousieType.class);		
 		acceptedCommandTypes.add(PercentType.class);		
 		acceptedCommandTypes.add(UpDownType.class);
 		acceptedCommandTypes.add(StopMoveType.class);
@@ -123,5 +123,9 @@ public class JalousieItem extends GenericItem {
 		
 		// Otherwise
 		return super.getStateAs(typeClass);
+	}
+	
+	public boolean isCurrentlyActive() {
+		return ((ExtendedJalousieType)state).isTransitionallyChanging();
 	}
 }

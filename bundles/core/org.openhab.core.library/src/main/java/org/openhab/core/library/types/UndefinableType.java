@@ -44,7 +44,7 @@ import org.openhab.core.types.State;
  * @author Ronny Stauffer
  * 
  */
-public class UndefinableType<T extends PrimitiveType> implements PrimitiveType, State, Comparable<UndefinableType<T>> {
+public class UndefinableType<T extends PrimitiveType> implements WildcardType, PrimitiveType, State, Comparable<UndefinableType<T>> {
 	
 	public enum Qualifier {
 		NONE,
