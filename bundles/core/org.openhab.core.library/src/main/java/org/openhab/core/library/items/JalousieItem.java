@@ -31,9 +31,7 @@ package org.openhab.core.library.items;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openhab.core.items.GenericItem;
 import org.openhab.core.library.types.ExtendedJalousieType;
-import org.openhab.core.library.types.JalousieType;
 import org.openhab.core.library.types.PercentType;
 import org.openhab.core.library.types.StopMoveType;
 import org.openhab.core.library.types.UndefinableType;
@@ -51,7 +49,7 @@ import org.openhab.core.types.UnDefType;
  * @author Ronny Stauffer
  *
  */
-public class JalousieItem extends GenericItem {
+public class JalousieItem extends RollershutterItem {
 	
 	private static List<Class<? extends State>> acceptedDataTypes = new ArrayList<Class<? extends State>>();
 	private static List<Class<? extends Command>> acceptedCommandTypes = new ArrayList<Class<? extends Command>>();
@@ -69,7 +67,7 @@ public class JalousieItem extends GenericItem {
 		acceptedCommandTypes.add(UpDownType.class);
 		acceptedCommandTypes.add(StopMoveType.class);
 	}
-	
+
 	public JalousieItem(String name) {
 		super(name);
 	}
