@@ -46,6 +46,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openhab.core.items.Item;
+import org.openhab.core.library.types.WildcardType;
 import org.openhab.core.types.Command;
 import org.openhab.core.types.State;
 import org.openhab.core.types.Type;
@@ -205,8 +206,14 @@ public class RuleTriggerManager {
 							if(ut.getItem().equals(item.getName())) {
 								if(ut.getState()!=null) {
 									State triggerState = TypeParser.parseState(item.getAcceptedDataTypes(), ut.getState());
-									if(!state.equals(triggerState)) {
-										continue;
+									if(triggerState instanceof WildcardType) {
+										if(!((WildcardType)triggerState).matches(state)) {
+											continue;
+										}
+									} else {
+										if(!state.equals(triggerState)) {
+											continue;
+										}
 									}
 								}
 								result.add(rule);
