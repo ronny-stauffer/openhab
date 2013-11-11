@@ -39,6 +39,7 @@ Service-Component: OSGI-INF/regexservice.xml, OSGI-INF/xpathservice.xml, OSGI-IN
   OSGI-INF/execservice.xml, OSGI-INF/javascriptservice.xml, OSGI-INF/mapservice.xml, OSGI-INF/transformationaction.xml,
   OSGI-INF/scaleservice.xml, OSGI-INF/jsonpathservice.xml
 Bundle-ClassPath: .,
+ lib/saxon9he.jar,
  lib/json-path-0.9.0.jar,
  lib/json-smart-1.2.jar
 Export-Package: org.openhab.core.transform,org.openhab.core.transform.
