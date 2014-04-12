@@ -184,8 +184,12 @@ public class RuleTriggerManager {
 						if (t instanceof UpdateEventTrigger) {
 							UpdateEventTrigger ut = (UpdateEventTrigger) t;
 							if(ut.getItem().equals(item.getName())) {
-								if(ut.getState()!=null) {
-									State triggerState = TypeParser.parseState(item.getAcceptedDataTypes(), ut.getState());
+								String stateAsString = ut.getState();
+								if(stateAsString!=null) {
+									// Remove all possibly surrounding (single and double) quotes.
+									// Quotes are present if the state is specified as 'STRING' token (and not as 'ID' or 'Number')
+									stateAsString = stateAsString.replaceAll("^\'|^\"|\'$|\"$", "");
+									State triggerState = TypeParser.parseState(item.getAcceptedDataTypes(), stateAsString);
 									if(triggerState instanceof WildcardType) {
 										if(!((WildcardType)triggerState).matches(state)) {
 											continue;
