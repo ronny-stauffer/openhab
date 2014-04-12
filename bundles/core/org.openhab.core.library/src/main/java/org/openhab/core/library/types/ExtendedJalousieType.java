@@ -59,8 +59,11 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	
 	private static final String EMPTY_STRING = "";
 	private static final String IS_CHANGING_TOKEN = "+";
+	
+	public static final String UP_LITERAL = "UP";
 	public static final String CLOSED_LITERAL = "CLOSED";
 	public static final String NOT_CLOSED_LITERAL = "NOT_CLOSED";
+	public static final String UNDEFINED_LITERAL = "UNDEFINED";
 	
 	// Constants for the constituents
 	static final public String KEY_VALUE = "v";
@@ -70,6 +73,8 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 	static final public ExtendedJalousieType UNDEFINED = new ExtendedJalousieType(UndefinableType.<PercentType>UNDEFINED(), UndefinableType.<PercentType>UNDEFINED());
 	static final public ExtendedJalousieType UP = new ExtendedJalousieType(UndefinableType.valueOf(PercentType.ZERO), UndefinableType.<PercentType>UNDEFINED());
 	static final public ExtendedJalousieType DOWN_AND_SLATS_CLOSED = new ExtendedJalousieType(UndefinableType.valueOf(PercentType.HUNDRED), UndefinableType.valueOf(PercentType.ZERO));
+	static final public ExtendedJalousieType CLOSED = DOWN_AND_SLATS_CLOSED; // Alias
+	
 
 	// The inherited field "value" of the parent DecimalType corresponds to the
 	// "value" constituent of this complex type.
@@ -109,16 +114,26 @@ public class ExtendedJalousieType extends UndefinableType<PercentType> implement
 		}
 		
 		String buffer = literalValue;
-
-		if (CLOSED_LITERAL.equals(buffer)) {
+		
+		if (UP_LITERAL.equals(buffer)) {
+			return UP;
+		} else if (CLOSED_LITERAL.equals(buffer)) {
 			return DOWN_AND_SLATS_CLOSED;
 		} else if (NOT_CLOSED_LITERAL.equals(buffer)) {
+			//TODO
+			return UNDEFINED;
+		} else if (UNDEFINED_LITERAL.equals(buffer)) {
 			return UNDEFINED;
 		}
 		
 		UndefinableType<PercentType> value;
 		UndefinableType<PercentType> slatsOpeningValue;
 		Set<Flags> flags = EnumSet.noneOf(Flags.class);
+		
+		// Remove all possibly surrounding (single and double) quotes.
+		// Quotes are present if the state is specified as 'STRING' token (and not as 'ID' or 'Number')
+		// See also: RuleTriggerManager.internalGetRules()
+		buffer = buffer.replaceAll("^\'|^\"|\'$|\"$", "");
 		
 		if (buffer.startsWith(IS_CHANGING_TOKEN) && buffer.length() > IS_CHANGING_TOKEN.length()) {
 			flags.add(Flags.IS_CHANGING);
