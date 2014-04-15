@@ -198,7 +198,7 @@ public class HttpBinding extends AbstractActiveBinding<HttpBindingProvider> impl
 					if(response==null) {
 						logger.error("No response received from '{}'", url);
 					} else {
-						String transformedResponse;
+						String transformedResponse = null;
 						
 						try {
 							String[] parts = splitTransformationConfig(transformation);
@@ -209,6 +209,8 @@ public class HttpBinding extends AbstractActiveBinding<HttpBindingProvider> impl
 								TransformationHelper.getTransformationService(HttpActivator.getContext(), transformationType);
 							if (transformationService != null) {
 								transformedResponse = transformationService.transform(transformationFunction, response);
+								
+								logger.debug("transformed response is '{}'", transformedResponse);
 							} else {
 								transformedResponse = response;
 								logger.warn("couldn't transform response because transformationService of type '{}' is unavailable", transformationType);
@@ -220,16 +222,15 @@ public class HttpBinding extends AbstractActiveBinding<HttpBindingProvider> impl
 							
 							// in case of an error we return the response without any
 							// transformation
-							transformedResponse = response;
+							//transformedResponse = response;
 						}
 						
-						logger.debug("transformed response is '{}'", transformedResponse);
-						
-						Class<? extends Item> itemType = provider.getItemType(itemName);
-						State state = createState(itemType, transformedResponse);
-						
-						if (state != null) {
-							eventPublisher.postUpdate(itemName, state);
+						if(transformedResponse != null) {
+							Class<? extends Item> itemType = provider.getItemType(itemName);
+							State state = createState(itemType, transformedResponse);
+							if (state != null) {
+								eventPublisher.postUpdate(itemName, state);
+							}
 						}
 					}
 					
