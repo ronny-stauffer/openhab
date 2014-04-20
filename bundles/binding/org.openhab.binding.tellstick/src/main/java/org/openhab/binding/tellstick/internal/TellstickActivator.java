@@ -38,7 +38,7 @@ public final class TellstickActivator implements BundleActivator {
 		try {
 			if (Platform.isWindows()) {
 				System.setProperty("jna.library.path",
-						"C:/Program Files/Telldus/;C:/Program Files (x86)/Telldus/");
+						"C:/Program Files/Telldus/;C:/Program Files (x86)/Telldus/;C:/progs/tellduscenter/2.1.2/");
 			}
 					
 			TellstickDevice.setSupportedMethods(JNA.CLibrary.TELLSTICK_BELL
